@@ -8,7 +8,7 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
   constructor(readonly configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromHeader('authorization'),
-      ignoreExpiration: true,
+      ignoreExpiration: false,
       secretOrKey: configService.get('JWT_ACCESS_SECRET'),
     });
   }
