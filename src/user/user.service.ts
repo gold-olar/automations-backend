@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { SubscriptionPlan } from '@prisma/client';
@@ -38,7 +37,7 @@ export class UserService {
     if (!existingAccessCode) {
       throw new NotFoundException('Invalid code');
     }
-    if (!existingAccessCode.active) {
+    if (existingAccessCode.active) {
       throw new BadRequestException('Access code is already in use');
     }
 
