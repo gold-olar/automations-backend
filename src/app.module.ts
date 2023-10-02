@@ -28,6 +28,6 @@ import { FirebaseAuthListenerService } from './firebase/firebase-auth-listener.s
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AuthStrategy, FirebaseAuthListenerService],
+  providers: [AppService, AuthStrategy],
 })
 export class AppModule {}
