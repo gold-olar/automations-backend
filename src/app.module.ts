@@ -7,9 +7,10 @@ import { UserModule } from './user/user.module';
 import { PrismaModule, loggingMiddleware } from 'nestjs-prisma';
 import config from './common/configs/config';
 import { FirebaseAuthListenerService } from './firebase/firebase-auth-listener.service';
-
+import { PassportModule } from '@nestjs/passport';
 @Module({
   imports: [
+    PassportModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config],

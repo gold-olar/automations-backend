@@ -11,7 +11,6 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
       ignoreExpiration: true,
       secretOrKey: configService.get('JWT_ACCESS_SECRET'),
     });
-    console.log(this.configService.get('JWT_ACCESS_SECRET'));
   }
 
   async validate(payload) {
