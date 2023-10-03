@@ -14,6 +14,7 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload) {
+    console.log(this.configService.get('JWT_ACCESS_SECRET'));
     const user = {
       userId: payload.user_id,
       email: payload.email,
