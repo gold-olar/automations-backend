@@ -11,10 +11,10 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
       ignoreExpiration: true,
       secretOrKey: configService.get('JWT_ACCESS_SECRET'),
     });
+    console.log(this.configService.get('JWT_ACCESS_SECRET'));
   }
 
   async validate(payload) {
-    console.log(this.configService.get('JWT_ACCESS_SECRET'));
     const user = {
       userId: payload.user_id,
       email: payload.email,
