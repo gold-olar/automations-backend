@@ -12,7 +12,7 @@ export class UserController {
   @Get('/')
   getUser(@Req() request: AuthorizedRequest) {
     const user = request.user;
-    return this.userService.getUserById(user.userId);
+    return this.userService.getUserById(user.userId, user?.email);
   }
 
   @UseGuards(AuthGuard('jwt'))

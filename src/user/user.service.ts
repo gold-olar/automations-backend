@@ -10,16 +10,17 @@ import { successResponse } from 'src/common/utils/response';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getUserById(userId: string) {
+  async getUserById(userId: string, email: string) {
     const user = await this.prisma.user.findFirst({
       where: {
-        id: userId,
+        OR: [{ id: userId }, { email }],
       },
     });
 
     if (!user) {
       throw new NotFoundException('User does not exist');
     }
+
     return successResponse('Found user!', user);
   }
 
@@ -73,7 +74,7 @@ export class UserService {
   async createNewUser(userId: string, email: string) {
     const existingUser = await this.prisma.user.findFirst({
       where: {
-        id: userId,
+        OR: [{ id: userId }, { email }],
       },
     });
 
