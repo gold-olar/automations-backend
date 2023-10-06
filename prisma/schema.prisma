@@ -12,10 +12,12 @@ datasource db {
 }
 
 model User {
-  id    String           @id @unique
-  email String           @unique
-  name  String?
-  plan  SubscriptionPlan @default(FREE)
+  id                   String                 @id @unique
+  email                String                 @unique
+  name                 String?
+  plan                 SubscriptionPlan       @default(FREE)
+  AutomationExecutions AutomationExecutions[]
+  JsonTransforms       JsonTransforms[]
 }
 
 enum SubscriptionPlan {
@@ -28,4 +30,38 @@ model AccessCode {
   value  String
   plan   SubscriptionPlan
   active Boolean          @default(false)
+}
+
+model AutomationExecutions {
+  id                Int    @id @default(autoincrement())
+  user_id           String
+  automation_app_id Int
+  input             String
+  output            String
+  json_transform_id Int?
+
+  users          User            @relation(fields: [user_id], references: [id])
+  automation_app AutomationApps  @relation(fields: [automation_app_id], references: [id])
+  json_transfom  JsonTransforms? @relation(fields: [json_transform_id], references: [id])
+}
+
+model AutomationApps {
+  id                   Int                    @id @default(autoincrement())
+  type                 AutomationApp
+  input_schema         String?
+  output_schema        String?
+  AutomationExecutions AutomationExecutions[]
+}
+
+model JsonTransforms {
+  id                   Int                    @id @default(autoincrement())
+  mapper               String
+  user_id              String
+  users                User                   @relation(fields: [user_id], references: [id])
+  AutomationExecutions AutomationExecutions[]
+}
+
+enum AutomationApp {
+  SCRAPE_LINKEDIN_PROFILE_SEARCH
+  ENRICH_LINKEDIN_PROFILES
 }
