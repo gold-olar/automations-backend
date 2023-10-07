@@ -18,7 +18,14 @@ export class UserService {
     });
 
     if (!user) {
-      throw new NotFoundException('User does not exist');
+      const newlyCreatedUser = await this.prisma.user.create({
+        data: {
+          id: userId,
+          email: email,
+          plan: SubscriptionPlan.FREE,
+        },
+      });
+      return successResponse('Found user!', newlyCreatedUser);
     }
 
     return successResponse('Found user!', user);
