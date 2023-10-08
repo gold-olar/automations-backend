@@ -1,34 +1,60 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
-import { AuthGuard } from '@nestjs/passport';
+
 import { AuthorizedRequest } from 'src/common/common.interface';
 import { ApplyAccessCodeDTO } from './dto/user.dto';
+import { FirebaseService } from 'src/firebase/firebase.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly firebase: FirebaseService,
+  ) {}
 
-  @UseGuards(AuthGuard('jwt'))
   @Get('/')
-  getUser(@Req() request: AuthorizedRequest) {
-    const user = request.user;
-    return this.userService.getUserById(user.userId, user?.email);
+  async getUser(@Req() request) {
+    const { status, tokenData } = await this.firebase.verifyToken(
+      request.headers.authorization,
+    );
+
+    if (!status) {
+      throw new HttpException('Invalid access token', HttpStatus.UNAUTHORIZED);
+    }
+    return this.userService.getUserById(tokenData?.uid, tokenData?.email);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Post('/apply-code')
-  applyAccessCode(
-    @Req() request: AuthorizedRequest,
-    @Body() payload: ApplyAccessCodeDTO,
-  ) {
-    const user = request.user;
-    return this.userService.applyAccessCode(user.userId, payload.accessCode);
+  async applyAccessCode(@Req() request, @Body() payload: ApplyAccessCodeDTO) {
+    const { status, tokenData } = await this.firebase.verifyToken(
+      request.headers.authorization,
+    );
+
+    if (!status) {
+      throw new HttpException('Invalid access token', HttpStatus.UNAUTHORIZED);
+    }
+    return this.userService.applyAccessCode(tokenData?.uid, payload.accessCode);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Post('/create')
-  createUser(@Req() request: AuthorizedRequest) {
-    const user = request.user;
-    return this.userService.createNewUser(user.userId, user.email);
+  async createUser(@Req() request: AuthorizedRequest) {
+    const { status, tokenData } = await this.firebase.verifyToken(
+      request.headers.authorization,
+    );
+
+    if (!status) {
+      throw new HttpException('Invalid access token', HttpStatus.UNAUTHORIZED);
+    }
+
+    return this.userService.createNewUser(tokenData?.uid, tokenData?.email);
   }
 }

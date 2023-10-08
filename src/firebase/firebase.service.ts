@@ -7,7 +7,7 @@ import { PrismaService } from 'nestjs-prisma';
 import { FirebaseConfig } from 'src/common/configs/config.interface';
 
 @Injectable()
-export class FirebaseAuthListenerService implements OnModuleInit {
+export class FirebaseService implements OnModuleInit {
   constructor(
     readonly configService: ConfigService,
     private readonly prisma: PrismaService,
@@ -44,5 +44,19 @@ export class FirebaseAuthListenerService implements OnModuleInit {
         },
       });
     });
+  }
+
+  async verifyToken(token: string) {
+    try {
+      const tokenData = await admin.auth().verifyIdToken(token);
+      return {
+        status: true,
+        tokenData,
+      };
+    } catch (error) {
+      return {
+        status: false,
+      };
+    }
   }
 }
