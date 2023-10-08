@@ -13,7 +13,7 @@ export class UserService {
   async getUserById(userId: string, email: string) {
     const user = await this.prisma.user.findFirst({
       where: {
-       id: userId ,  email 
+       OR: [{ id: userId }, { email }],
       },
     });
 
