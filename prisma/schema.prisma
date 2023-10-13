@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -18,11 +15,7 @@ model User {
   plan                 SubscriptionPlan       @default(FREE)
   AutomationExecutions AutomationExecutions[]
   JsonTransforms       JsonTransforms[]
-}
-
-enum SubscriptionPlan {
-  FREE
-  PREMIUM
+  AutomationSchedule   AutomationSchedule[]
 }
 
 model AccessCode {
@@ -33,16 +26,15 @@ model AccessCode {
 }
 
 model AutomationExecutions {
-  id                Int    @id @default(autoincrement())
+  id                Int             @id @default(autoincrement())
   user_id           String
   automation_app_id Int
   input             String
   output            String
   json_transform_id Int?
-
-  users          User            @relation(fields: [user_id], references: [id])
-  automation_app AutomationApps  @relation(fields: [automation_app_id], references: [id])
-  json_transfom  JsonTransforms? @relation(fields: [json_transform_id], references: [id])
+  automation_app    AutomationApps  @relation(fields: [automation_app_id], references: [id])
+  json_transfom     JsonTransforms? @relation(fields: [json_transform_id], references: [id])
+  users             User            @relation(fields: [user_id], references: [id])
 }
 
 model AutomationApps {
@@ -57,8 +49,21 @@ model JsonTransforms {
   id                   Int                    @id @default(autoincrement())
   mapper               String
   user_id              String
-  users                User                   @relation(fields: [user_id], references: [id])
   AutomationExecutions AutomationExecutions[]
+  users                User                   @relation(fields: [user_id], references: [id])
+}
+
+model AutomationSchedule {
+  id              Int    @id @default(autoincrement())
+  user_id         String
+  chain_links     String
+  schedule_config String
+  users           User   @relation(fields: [user_id], references: [id])
+}
+
+enum SubscriptionPlan {
+  FREE
+  PREMIUM
 }
 
 enum AutomationApp {
